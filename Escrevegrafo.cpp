@@ -33,10 +33,9 @@ void criaAdj(VERTICE* g, int vi, int vf, int p,registro* vetor_grafo,int* cont){
     *cont= *cont+1;
 }
 
-
 int main(){
     FILE* arq;
-    arq = fopen("grafo.wasd","wb");
+    arq = fopen("grafo.dad","wb");
     VERTICE* graf = (VERTICE*) malloc(sizeof(VERTICE)*5);
     
     for (int i = 0; i < 5; i++){
@@ -55,11 +54,9 @@ int main(){
     criaAdj(graf,3,2,3,vetor_grafo,&cont);
     criaAdj(graf,4,3,8,vetor_grafo,&cont);
 
-    fwrite(vetor_grafo,sizeof(registro),cont-1,arq);
-    fclose(arq);
 
-    
-    
+    fwrite(vetor_grafo,sizeof(registro),cont,arq);
+    fclose(arq);
 
     
 }

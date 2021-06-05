@@ -21,6 +21,7 @@ typedef struct {
     NO* inicio;
 } VERTICE;
 
+
 void criaAdj(VERTICE* g, int vi, int vf, int p){
     NO* novo = (NO*) malloc(sizeof(NO));
     novo->vertice = vf;
@@ -33,7 +34,7 @@ void criaAdj(VERTICE* g, int vi, int vf, int p){
 int main(){
 
     FILE* arq;
-    arq = fopen("grafo.wasd","rb");
+    arq = fopen("grafo.dad","rb");
     if(arq != NULL){
         int tam;
         fread(&tam,sizeof(int),1,arq);
@@ -43,11 +44,16 @@ int main(){
             graf[i].inicio = NULL;
         }
 
-        int count = -1;
+        int count = 0;
         struct registro vetor_grafo[36];
-        count = fread(&vetor_grafo,sizeof(int),1,arq);
+        while (!feof(arq)){
+             fread(&vetor_grafo[count],sizeof(registro),1,arq);
+             count++;
+        }
+        
+        fclose(arq);
 
-        for (int i = 0; i < count; i++){
+        for (int i = 0; i < count-1; i++){
             criaAdj(graf,vetor_grafo[i].v1,vetor_grafo[i].v2,vetor_grafo[i].custo);
         }
     }
