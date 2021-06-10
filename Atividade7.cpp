@@ -16,8 +16,6 @@ typedef struct aresta {
 } NO;
 
 typedef struct {
-    bool chave;
-    int flag;
     NO* inicio;
 } VERTICE;
 
@@ -45,7 +43,7 @@ int main(){
         }
 
         int count = 0;
-        struct registro vetor_grafo[36];
+        struct registro vetor_grafo[45];
         while (!feof(arq)){
              fread(&vetor_grafo[count],sizeof(registro),1,arq);
              count++;

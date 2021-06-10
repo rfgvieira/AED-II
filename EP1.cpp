@@ -25,12 +25,20 @@ typedef struct {
 	NO* inicio;
 } VERTICE;
 
-//Lista
-typedef struct lista {
-	struct lista* prox;
-	NO* inicio;
-}LISTA;
-
+void exibir(NO* l){
+    if(l!=NULL){
+        printf("[");
+        while (l->prox != NULL)
+        {
+            printf("%d,", l->v);
+            l = l->prox;
+        }
+        printf("%d]", l->v);
+    }
+    else
+        printf("NULL");
+    
+}
 
 void criaAdj(VERTICE* g, int vi, int vf){
     NO* novo = (NO*) malloc(sizeof(NO));
@@ -42,7 +50,7 @@ void criaAdj(VERTICE* g, int vi, int vf){
 // funcao principal
 NO* caminhos_max_d(VERTICE* g, int n, int x, int y, int d);
 
-LISTA* ultimoL(LISTA* p){
+NO* ultimo(NO* p){
     while(p){
         if(p->prox == NULL){
             return p;
@@ -52,35 +60,40 @@ LISTA* ultimoL(LISTA* p){
     return NULL;
 }
 
-void addLista(NO* *caminho, LISTA* *l){
-	LISTA* novo = (LISTA*) malloc(sizeof(LISTA));
-	LISTA* ult = ultimoL(*l);
-	NO* temp = *caminho;
-	novo->inicio = temp;
-	caminho = NULL;
-	if (ult)
-		ult->prox = novo;
-	else
-		*l = novo;
-}
-
-void verificar(LISTA l){
-
-}
-
-NO* ultimoN(NO* p){
-    while(p){
-        if(p->prox == NULL){
-            return p;
+void removeUlt(NO* *caminho,int* *flag){
+    NO* ult = ultimo(*caminho);
+    int ultvert = ult->v;
+    NO* p = *caminho;
+    while (p){
+        if (p->prox == ult){
+            p->prox = NULL;
+            free(ult);
+            break;
         }
+        
         p = p->prox;
     }
-    return NULL;
+    // *flag[ultvert-1] = 0;
+}
+
+void addLista(NO* *caminho, NO* *l){
+    NO* p = *caminho;
+	while (p){
+        NO* ult = ultimo(*l);
+        NO* novo = (NO*) malloc(sizeof(NO));
+        novo->v = p->v;
+        novo->prox = NULL;
+        p = p->prox;
+        if (ult)
+		    ult->prox = novo;
+	    else
+		    *l = novo;
+    }	
 }
 
 void criaCaminho(NO* *caminho, int v){
 	NO* novo = (NO*) malloc(sizeof(NO));
-    NO* ult = ultimoN(*caminho);
+    NO* ult = ultimo(*caminho);
     novo->v = v;
     novo->prox = NULL;
     if(!ult)
@@ -89,30 +102,45 @@ void criaCaminho(NO* *caminho, int v){
         ult->prox = novo;	
 }
 
-void percorre(VERTICE* g, int x, int y, int d,int cont){
-    
-	NO* caminho;
-	LISTA* l;
+void percorre(VERTICE* g, int x, int y, int d,int cont,NO* *l,int* flag,NO* caminho){
+    criaCaminho(&caminho,x);
+    flag[x-1] = 1;
 
 	if (cont > d){
+        removeUlt(&caminho,&flag);
+        flag[x-1] = 0;
 		return;
 	}
 	if(x == y){
-		addLista(&caminho, &l);
+		addLista(&caminho, &*l);
+        removeUlt(&caminho,&flag);
+        flag[x-1] = 0;
+        return;
 	}
 
 	NO* n = g[x].inicio;
 	while (n){
-		NO* ant = n;
-		criaCaminho(&caminho,x);
-		percorre(g,n->v,y,d,cont+1);
+		if (flag[(n->v)-1] == 0){
+            percorre(g,n->v,y,d,cont+1,&*l,flag,caminho);
+        }
+		    
         n = n->prox;
     }
+    removeUlt(&caminho,&flag);
+    flag[x-1] = 2;
 }
 
 NO* caminhos_max_d(VERTICE* g, int n, int x, int y, int d){
-	int cont = 1;
-	percorre(g,x,y,d,cont);
+	int cont = 0;
+    NO* lista = NULL;
+	NO* caminho = NULL;
+    int *flag = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; ++i) {
+         flag[i] = 0;
+    }
+	percorre(g,x,y,d,cont,&lista,flag,caminho);
+    
+    return lista;
 }
 
 int main()
@@ -124,7 +152,7 @@ int main()
     int tamg = 5;
 	for (int i = 1; i <= tamg; i++)
         graf[i].inicio = NULL;
-
+    NO* lista = NULL;
     criaAdj(graf,1,3);
     criaAdj(graf,1,2);
     criaAdj(graf,3,2);
@@ -132,5 +160,7 @@ int main()
     criaAdj(graf,4,2);
     criaAdj(graf,4,3);
     criaAdj(graf,5,4);
+    lista = caminhos_max_d(graf,tamg,1,4,1);
+    exibir(lista);
 }
 
