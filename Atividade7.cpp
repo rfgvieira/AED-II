@@ -51,7 +51,7 @@ int main(){
         
         fclose(arq);
 
-        for (int i = 0; i < count-1; i++){
+        for (int i = 0; i < count; i++){
             criaAdj(graf,vetor_grafo[i].v1,vetor_grafo[i].v2,vetor_grafo[i].custo);
         }
     }

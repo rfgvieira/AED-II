@@ -25,28 +25,6 @@ typedef struct {
 	NO* inicio;
 } VERTICE;
 
-void exibir(NO* l){
-    if(l!=NULL){
-        printf("[");
-        while (l->prox != NULL)
-        {
-            printf("%d,", l->v);
-            l = l->prox;
-        }
-        printf("%d]", l->v);
-    }
-    else
-        printf("NULL");
-    
-}
-
-void criaAdj(VERTICE* g, int vi, int vf){
-    NO* novo = (NO*) malloc(sizeof(NO));
-    novo->v = vf;
-    novo->prox = g[vi].inicio;
-    g[vi].inicio = novo;
-}
-
 // funcao principal
 NO* caminhos_max_d(VERTICE* g, int n, int x, int y, int d);
 
@@ -73,7 +51,6 @@ void removeUlt(NO* *caminho,int* *flag){
         
         p = p->prox;
     }
-    // *flag[ultvert-1] = 0;
 }
 
 void addLista(NO* *caminho, NO* *l){
@@ -147,20 +124,5 @@ int main()
 {
 	if (nroUSP()==0)
 	 printf("\n\nNro USP nao informado!!!\n\n");
-	
-	VERTICE* graf = (VERTICE*) malloc(sizeof(VERTICE)*5);
-    int tamg = 5;
-	for (int i = 1; i <= tamg; i++)
-        graf[i].inicio = NULL;
-    NO* lista = NULL;
-    criaAdj(graf,1,3);
-    criaAdj(graf,1,2);
-    criaAdj(graf,3,2);
-    criaAdj(graf,3,5);
-    criaAdj(graf,4,2);
-    criaAdj(graf,4,3);
-    criaAdj(graf,5,4);
-    lista = caminhos_max_d(graf,tamg,1,4,1);
-    exibir(lista);
 }
 

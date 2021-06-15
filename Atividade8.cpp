@@ -10,91 +10,64 @@ typedef struct registro{
 } REGISTRO;
 
 typedef struct tabela {
-    char chave[2];
+    int chave[2];
     int endereco;
     struct tabela *prox;
 } TABELA;
 
-typedef struct aresta {
-    int vertice;
-    int peso;
-    struct aresta *prox;
-} NO;
-
-typedef struct {
-    NO* inicio;
-} VERTICE;
-
-void criaAdj(VERTICE* g, int vi, int vf, int p){
-    NO* novo = (NO*) malloc(sizeof(NO));
-    novo->vertice = vf;
-    novo->peso = p;
-    novo->prox = g[vi].inicio;
-    g[vi].inicio = novo;
-}
-
-VERTICE* leGrafo(FILE* arq){
-    if(arq != NULL){
-            int tam;
-            fread(&tam,sizeof(int),1,arq);
-
-            VERTICE* graf = (VERTICE*) malloc(sizeof(VERTICE)*tam);
-            for (int i = 0; i < tam; i++){
-                graf[i].inicio = NULL;
-            }
-
-            int count = 0;
-            struct registro vetor_grafo[45];
-            while (!feof(arq)){
-                fread(&vetor_grafo[count],sizeof(registro),1,arq);
-                count++;
-            }
-            
-            fclose(arq);
-
-            for (int i = 0; i < count-1; i++){
-                criaAdj(graf,vetor_grafo[i].v1,vetor_grafo[i].v2,vetor_grafo[i].custo);
-            }
-            return graf;
-    }
-}
-
-void insereTabela(){
-
-}
-
-void custoIndex(FILE* arq,int vi,int vf){
-    registro reg;
-    int prox = 0;
-    TABELA tabela;
-    while (!feof(arq)){
-        char chave1 = -1;
-        char chave2 = -1;
-
-        fread(&chave1,sizeof(reg.v1),1,arq);
-        fread(&chave2,sizeof(reg.v2),1,arq);
-        fseek(arq,sizeof(reg.custo),SEEK_CUR);
-        
-
-        prox++;
-    }
-    
-    
-    
-    
-    
-}
-
-int custoGraf(VERTICE* g,int vi,int vf){
-    NO* p = g[vi].inicio;
-    while (p)
-    {
-        if(p->vertice == vf){
-            return p->peso;
+TABELA* ultimo(TABELA* tab){
+    TABELA* p = tab;
+    while(p){
+        if(p->prox == NULL){
+            return p;
         }
         p = p->prox;
     }
     return NULL;
+}
+
+void insereTabela(TABELA* *tab,int c1,int c2,int end){
+    TABELA* novo = (TABELA*) malloc(sizeof(TABELA));
+    TABELA* ult = ultimo(*tab);
+    novo->chave[0] = c1;
+    novo->chave[1] = c2;
+    novo->prox = NULL;
+    novo->endereco = end;
+    if (ult)
+        ult->prox = novo;
+    else
+        *tab = novo;
+}
+
+int procuraTabela(TABELA* tab,int vi,int vf){
+    while (tab){
+        if(tab->chave[0] == vi && tab->chave[1] == vf){
+            return tab->endereco;
+        }
+        tab = tab->prox;
+    }
+    return -1;
+}
+
+int custoIndex(FILE* arq,int vi,int vf){
+    int prox = 0;
+    TABELA* tabela = NULL;
+    
+    fseek(arq,sizeof(int),SEEK_SET);
+    registro r;
+
+    while (!feof(arq)){
+        fread(&r,sizeof(registro),1,arq);
+        insereTabela(&tabela,r.v1,r.v2,prox);
+        prox++;
+    }
+
+    int endereco = procuraTabela(tabela,vi,vf);
+    fseek(arq,sizeof(int),SEEK_SET);
+    fseek(arq,sizeof(REGISTRO) * endereco,SEEK_CUR);
+    fread(&r,sizeof(REGISTRO),1,arq);
+    
+    return (endereco == -1) ? -1 : r.custo;
     
 }
 
@@ -102,7 +75,6 @@ int main(){
 
     FILE* arq;
     arq = fopen("grafo.dad","rb");
-    VERTICE* graf = leGrafo(arq);
-    int custo = custoGraf(graf,2,4);
-    printf("%d",custo);
+    int resp = custoIndex(arq,2,4);
+    printf("%d", resp);
 }
