@@ -47,12 +47,15 @@ int main(){
 
     int cont = 0;
     criaAdj(graf,0,2,3,vetor_grafo,&cont);
-    criaAdj(graf,0,1,8,vetor_grafo,&cont);
-    criaAdj(graf,2,1,4,vetor_grafo,&cont);
     criaAdj(graf,2,4,1,vetor_grafo,&cont);
-    criaAdj(graf,3,1,3,vetor_grafo,&cont);
+    criaAdj(graf,0,3,8,vetor_grafo,&cont);
     criaAdj(graf,3,2,3,vetor_grafo,&cont);
     criaAdj(graf,4,3,8,vetor_grafo,&cont);
+    criaAdj(graf,0,4,12,vetor_grafo,&cont);
+    criaAdj(graf,2,1,4,vetor_grafo,&cont);
+    criaAdj(graf,0,1,22,vetor_grafo,&cont);
+    criaAdj(graf,3,1,3,vetor_grafo,&cont);
+    
 
 
     fwrite(vetor_grafo,sizeof(registro),cont,arq);

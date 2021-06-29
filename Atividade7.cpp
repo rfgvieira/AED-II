@@ -19,6 +19,19 @@ typedef struct {
     NO* inicio;
 } VERTICE;
 
+void exibir(VERTICE* g, int n ){
+    for (int i = 0; i < n; i++)
+    {   
+        printf("V%d:  ",i);
+        NO* no = g[i].inicio;
+        while (no)
+        {
+            printf("V%d ",no->vertice);
+            no = no->prox;
+        }
+        printf("\n") ;
+    } 
+}
 
 void criaAdj(VERTICE* g, int vi, int vf, int p){
     NO* novo = (NO*) malloc(sizeof(NO));
@@ -51,8 +64,9 @@ int main(){
         
         fclose(arq);
 
-        for (int i = 0; i < count; i++){
+        for (int i = 0; i < count-1; i++){
             criaAdj(graf,vetor_grafo[i].v1,vetor_grafo[i].v2,vetor_grafo[i].custo);
         }
+        exibir(graf,tam);
     }
 }
